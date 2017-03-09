@@ -14,10 +14,11 @@
     a {text-decoration: none; color: #333}
     /* custome style */
     .input a {border: 1px solid #cbcbcb; padding: 2px; margin-right: 5px;}
-    .left-out {margin-left: 15px;}
+    .ml15 {margin-left: 15px;}
     .input {margin-bottom: 5px;}
-    .output .cube {background: red; color: #fff; padding: 5px; float: left; 
-      margin-right: 5px; margin-bottom: 5px;}
+    .output .cube {background: red; color: #fff; float: left; margin-right: 5px; 
+      margin-bottom: 5px; height: 200px; width: 15px; }
+    .output .cube .cube-inner {height: 100%; background: #fff;}
     .output {overflow: hidden;}
   </style>
 </head>
@@ -26,7 +27,8 @@
   <div class="input">
     <input type="number" max="100" min="10" step="1" value="10">
     <a href="#" class="left-in">左侧入</a><a href="#" class="right-in">右侧入</a>
-    <a href="#" class="left-out">左侧出</a><a href="#" class="right-out">右侧出</a>
+    <a href="#" class="left-out ml15">左侧出</a><a href="#" class="right-out">右侧出</a>
+    <a href="#" class="sort ml15">排序</a>
   </div>
   <ul class="output"></ul>
 </body>

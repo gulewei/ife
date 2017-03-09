@@ -5,7 +5,8 @@ window.onload = function () {
     leftOut = $('.left-out'),
     rightIn = $('.right-in'),
     rightOut = $('.right-out'),
-    outputBox = $('.output');
+    outputBox = $('.output'),
+    sort = $('.sort');
 
   Object.defineProperty(state, 'val', {
     set: function (newVal) {
@@ -36,9 +37,12 @@ window.onload = function () {
       }
       // 跟新dom节点
       var fragment = document.createDocumentFragment()
+      var index = 0
       newVal.map(function (x) {
         var item = createCube(x)
+        item.setAttribute('data-index', index)
         fragment.appendChild(item)
+        index++
       })
       outputBox.innerHTML = ''
       outputBox.appendChild(fragment)
@@ -51,7 +55,7 @@ window.onload = function () {
 
   // 初始值
   state.val = inputBox.value
-  state.arr = [10, 3, 7, 12, 11]
+  state.arr = [10, 3, 7, 12, 11, 22, 37, 15, 28, 36, 45, 57, 21, 31]
 
   // 绑定input.value 到 state.val
   inputBox.oninput = function () {
@@ -60,26 +64,23 @@ window.onload = function () {
 
   // 左侧入
   leftIn.onclick = function () {
-    state.arr.unshift(state.val)
-    state.arr = state.arr
+    state.arr = [state.val].concat(state.arr)
   }
 
   // 右侧入
   rightIn.onclick = function () {
-    state.arr.push(state.val)
-    state.arr = state.arr    
+    state.arr = state.arr.concat([state.val])
   }
 
   // 左侧出
   leftOut.onclick = function () {
-    state.arr.shift(state.val)
-    state.arr = state.arr    
+    state.arr = state.arr.slice(1)
   }
 
   // 右侧出
   rightOut.onclick = function () {
-    state.arr.pop(state.val)
-    state.arr = state.arr    
+    var len = state.arr.length
+    state.arr = state.arr.slice(0, len - 1)
   }
 
   // 删除点击元素
@@ -89,6 +90,13 @@ window.onload = function () {
     var index = getIndex(list, target)
     state.arr.splice(index, 1)
     state.arr = state.arr
+  }
+
+  // 排序
+  sort.onclick = function () {
+    var record = qSort.call(state.arr, (a, b) => b - a)
+    var duration = 5000
+    play(record, duration)
   }
 }
 
@@ -102,10 +110,14 @@ function getIndex(list, item) {
 
 // 创建队列节点
 function createCube(n) {
-  var div = document.createElement('div')
-  div.className = 'cube'
-  div.innerText = n
-  return div
+  var li = document.createElement('li')
+  var liInner = document.createElement('div')
+  li.className = 'cube'
+  liInner.className = 'cube-inner'
+  li.appendChild(liInner)
+  li.setAttribute('data-value', n)
+  liInner.style.height = (100 - n) + '%'
+  return li
 }
 
 // 选择器函数
@@ -118,7 +130,46 @@ function checkNum(val) {
   return val.replace(/\D/g, '');
 }
 
-// 数组排序
-function sort(arr) {
-  
+// 快排 (from winter's gist)
+function qSort(compare) {
+  var record = []
+  var swap = (p1, p2) => {
+    var tmp = this[p1]
+    this[p1] = this[p2]
+    this[p2] = tmp
+    record.push(this.slice(0))
+  }
+  var sortRange = (start, end) => {
+    var midValue = this[start]
+    var p1 = start, p2 = end - 1
+    while (p1 < p2) {
+      swap(p1, p1 + 1)
+      while (compare(this[p1], midValue) <= 0 && p1 < p2) {
+        swap(p1, p2--)
+      }
+      p1++
+    }
+    if (start < p1 - 1)
+      sortRange(start, p1)
+    if (p1 < end - 1)
+      sortRange(p1, end)
+
+  }
+  sortRange(0, this.length)
+  return record
+}
+
+// 播放
+function play(record, duration) {
+  var len = record.length
+  if (len === 0)
+    return
+  var i = 0
+  var timer = setInterval(function () {
+    if (i >= len - 1)
+      clearInterval(timer)
+    state.arr = record[i]
+    // console.log('record', record[i])
+    i++
+  }, duration / len)
 }

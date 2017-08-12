@@ -37,12 +37,10 @@ window.onload = function () {
       }
       // 跟新dom节点
       var fragment = document.createDocumentFragment()
-      var index = 0
-      newVal.map(function (x) {
+      newVal.map(function (x, i) {
         var item = createCube(x)
-        item.setAttribute('data-index', index)
+        item.setAttribute('data-index', i)
         fragment.appendChild(item)
-        index++
       })
       outputBox.innerHTML = ''
       outputBox.appendChild(fragment)
